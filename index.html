@@ -1,72 +1,48 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Presuobra PRO</title>
-  <style>
-    body {
-      font-family: Arial;
-      padding: 20px;
-      background: #f4f4f4;
-    }
-
-    h1 {
-      color: #333;
-    }
-
-    input, select, button {
-      padding: 10px;
-      margin: 5px 0;
-      width: 100%;
-      max-width: 300px;
-    }
-
-    button {
-      background: #28a745;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #218838;
-    }
-
-    .card {
-      background: white;
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 5px;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Presuobra PRO</title>
+<style>
+body { font-family: Arial; padding:20px; background:#f4f4f4; }
+input, select, button { padding:10px; margin:5px 0; width:100%; max-width:300px; }
+button { background:#28a745; color:white; border:0; cursor:pointer; }
+button:hover { background:#218838; }
+.card { background:white; padding:10px; margin:10px 0; border-radius:5px; }
+h2 { margin-top:30px; }
+</style>
 </head>
 
 <body>
 
-<h1>🏗️ Presuobra PRO</h1>
+<h1>🏗️ PRESUOBRA PRO - APP COMPLETA</h1>
 
-<h2>💰 Crear presupuesto</h2>
+<h2>👤 Cliente</h2>
+<input id="cliente" placeholder="Nombre del cliente">
 
-<input id="metros" type="number" placeholder="Metros / Cantidad">
+<h2>🧾 Presupuesto</h2>
+
+<input id="metros" type="number" placeholder="Cantidad">
 
 <select id="tipo">
-  <option value="enfoscado">Enfoscado (12 €/m²)</option>
-  <option value="demolicion">Demolición (35 €/m³)</option>
-  <option value="ladrillo">Ladrillo (0,80 €/ud)</option>
-  <option value="excavacion">Excavación (25 €/m³)</option>
-  <option value="zuncho">Zuncho hormigón (45 €/ml)</option>
+  <option value="enfoscado">Enfoscado</option>
+  <option value="demolicion">Demolición</option>
+  <option value="ladrillo">Ladrillo</option>
+  <option value="excavacion">Excavación</option>
+  <option value="zuncho">Zuncho</option>
 </select>
 
-<button onclick="calcular()">Crear presupuesto</button>
+<button onclick="crear()">Crear presupuesto</button>
 
 <h2 id="resultado"></h2>
 
 <hr>
 
-<h2>📁 Historial de presupuestos</h2>
+<h2>📁 Historial completo</h2>
 <div id="lista"></div>
 
 <script>
+
 const precios = {
   enfoscado: 12,
   demolicion: 35,
@@ -75,44 +51,49 @@ const precios = {
   zuncho: 45
 };
 
-function calcular() {
-  let m2 = parseFloat(document.getElementById("metros").value);
+function crear() {
+  let cliente = document.getElementById("cliente").value || "Sin cliente";
+  let cantidad = parseFloat(document.getElementById("metros").value);
   let tipo = document.getElementById("tipo").value;
 
-  if (!m2 || m2 <= 0) {
-    document.getElementById("resultado").innerText = "Introduce una cantidad válida";
+  if (!cantidad || cantidad <= 0) {
+    document.getElementById("resultado").innerText = "Cantidad inválida";
     return;
   }
 
-  let total = m2 * precios[tipo];
+  let total = cantidad * precios[tipo];
 
   let presupuesto = {
+    cliente: cliente,
     tipo: tipo,
-    cantidad: m2,
-    total: total
+    cantidad: cantidad,
+    total: total,
+    fecha: new Date().toLocaleDateString()
   };
 
-  let lista = JSON.parse(localStorage.getItem("presupuestos")) || [];
-  lista.push(presupuesto);
-  localStorage.setItem("presupuestos", JSON.stringify(lista));
+  let datos = JSON.parse(localStorage.getItem("app_presuobra")) || [];
+  datos.push(presupuesto);
+  localStorage.setItem("app_presuobra", JSON.stringify(datos));
 
   document.getElementById("resultado").innerHTML =
-    "💰 TOTAL: " + total.toFixed(2) + " €";
+    "💰 Total: " + total.toFixed(2) + " €";
 
-  mostrarLista();
+  mostrar();
 }
 
-function mostrarLista() {
-  let lista = JSON.parse(localStorage.getItem("presupuestos")) || [];
+function mostrar() {
+  let datos = JSON.parse(localStorage.getItem("app_presuobra")) || [];
 
   let html = "";
 
-  lista.forEach((p, i) => {
+  datos.forEach(p => {
     html += `
       <div class="card">
-        <strong>${p.tipo}</strong><br>
-        Cantidad: ${p.cantidad}<br>
-        Total: ${p.total.toFixed(2)} €
+        <strong>👤 ${p.cliente}</strong><br>
+        🧱 ${p.tipo}<br>
+        📏 ${p.cantidad}<br>
+        💰 ${p.total.toFixed(2)} €<br>
+        📅 ${p.fecha}
       </div>
     `;
   });
@@ -120,7 +101,8 @@ function mostrarLista() {
   document.getElementById("lista").innerHTML = html;
 }
 
-mostrarLista();
+mostrar();
+
 </script>
 
 </body>

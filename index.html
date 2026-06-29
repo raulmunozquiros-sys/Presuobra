@@ -3,24 +3,51 @@
 <head>
 <meta charset="UTF-8">
 <title>Presuobra PRO</title>
+
 <style>
-body { font-family: Arial; padding:20px; background:#f4f4f4; }
-input, select, button { padding:10px; margin:5px 0; width:100%; max-width:300px; }
-button { background:#28a745; color:white; border:0; cursor:pointer; }
-button:hover { background:#218838; }
-.card { background:white; padding:10px; margin:10px 0; border-radius:5px; }
-h2 { margin-top:30px; }
+body {
+  font-family: Arial;
+  background: #f4f4f4;
+  padding: 20px;
+}
+
+h1 { color: #222; }
+
+input, select, button {
+  padding: 10px;
+  margin: 5px 0;
+  width: 100%;
+  max-width: 320px;
+}
+
+button {
+  background: #28a745;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #218838;
+}
+
+.card {
+  background: white;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 6px;
+}
 </style>
+
 </head>
 
 <body>
 
-<h1>🏗️ PRESUOBRA PRO - APP COMPLETA</h1>
+<h1>🏗️ PRESUOBRA PRO</h1>
 
-<h2>👤 Cliente</h2>
+<h2>🧾 Crear presupuesto</h2>
+
 <input id="cliente" placeholder="Nombre del cliente">
-
-<h2>🧾 Presupuesto</h2>
 
 <input id="metros" type="number" placeholder="Cantidad">
 
@@ -32,13 +59,13 @@ h2 { margin-top:30px; }
   <option value="zuncho">Zuncho</option>
 </select>
 
-<button onclick="crear()">Crear presupuesto</button>
+<button onclick="crearPresupuesto()">Crear presupuesto</button>
 
 <h2 id="resultado"></h2>
 
 <hr>
 
-<h2>📁 Historial completo</h2>
+<h2>📁 Historial</h2>
 <div id="lista"></div>
 
 <script>
@@ -51,13 +78,14 @@ const precios = {
   zuncho: 45
 };
 
-function crear() {
+function crearPresupuesto() {
+
   let cliente = document.getElementById("cliente").value || "Sin cliente";
   let cantidad = parseFloat(document.getElementById("metros").value);
   let tipo = document.getElementById("tipo").value;
 
   if (!cantidad || cantidad <= 0) {
-    document.getElementById("resultado").innerText = "Cantidad inválida";
+    document.getElementById("resultado").innerText = "❌ Introduce una cantidad válida";
     return;
   }
 
@@ -71,20 +99,25 @@ function crear() {
     fecha: new Date().toLocaleDateString()
   };
 
-  let datos = JSON.parse(localStorage.getItem("app_presuobra")) || [];
+  let datos = JSON.parse(localStorage.getItem("presuobra")) || [];
   datos.push(presupuesto);
-  localStorage.setItem("app_presuobra", JSON.stringify(datos));
+  localStorage.setItem("presuobra", JSON.stringify(datos));
 
   document.getElementById("resultado").innerHTML =
-    "💰 Total: " + total.toFixed(2) + " €";
+    "💰 Total: <strong>" + total.toFixed(2) + " €</strong>";
 
-  mostrar();
+  mostrarHistorial();
 }
 
-function mostrar() {
-  let datos = JSON.parse(localStorage.getItem("app_presuobra")) || [];
+function mostrarHistorial() {
+
+  let datos = JSON.parse(localStorage.getItem("presuobra")) || [];
 
   let html = "";
+
+  if (datos.length === 0) {
+    html = "<p>No hay presupuestos todavía</p>";
+  }
 
   datos.forEach(p => {
     html += `
@@ -101,7 +134,7 @@ function mostrar() {
   document.getElementById("lista").innerHTML = html;
 }
 
-mostrar();
+mostrarHistorial();
 
 </script>
 

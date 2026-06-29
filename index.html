@@ -77,7 +77,34 @@ button:hover{
 
 <br><br>
 
-<button onclick="calcular()">Crear presupuesto</button>
+<button onclick="calcular()function calcular() {
+  let m2 = parseFloat(document.getElementById("metros").value);
+  let tipo = document.getElementById("tipo").value;
+
+  if (!m2 || m2 <= 0) {
+    document.getElementById("resultado").innerText = "Introduce una cantidad válida";
+    return;
+  }
+
+  let precioUnitario = precios[tipo];
+  let total = m2 * precioUnitario;
+
+  let presupuesto = {
+    tipo: tipo,
+    cantidad: m2,
+    precioUnitario: precioUnitario,
+    total: total
+  };
+
+  let lista = JSON.parse(localStorage.getItem("presupuestos")) || [];
+  lista.push(presupuesto);
+  localStorage.setItem("presupuestos", JSON.stringify(lista));
+
+  document.getElementById("resultado").innerHTML =
+    "💰 TOTAL: " + total.toFixed(2) + " €";
+
+  mostrarLista();
+}">Crear presupuesto</button>
 
 <h3 id="resultado"></h3>
 
@@ -101,5 +128,26 @@ function calcular() {
   document.getElementById("resultado").innerText =
     "💰 Total presupuesto: " + total.toFixed(2) + " €";
 }
-</script></body>
+</script>function mostrarLista() {
+  let lista = JSON.parse(localStorage.getItem("presupuestos")) || [];
+
+  let html = "";
+
+  lista.forEach((p) => {
+    html += `
+      <div style="border:1px solid #ccc; padding:10px; margin:5px;">
+        <strong>${p.tipo}</strong><br>
+        Cantidad: ${p.cantidad}<br>
+        Total: ${p.total.toFixed(2)} €
+      </div>
+    `;
+  });
+
+  document.getElementById("lista").innerHTML = html;
+}
+
+mostrarLista();</body>
 </html>
+<hr>
+<h2>📁 Historial</h2>
+<div id="lista"></div>

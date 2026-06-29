@@ -63,5 +63,43 @@ button:hover{
 
 </main>
 
-</body>
+<hr>
+
+<h2>💰 Presupuesto rápido PRO</h2>
+
+<input id="metros" type="number" placeholder="Metros cuadrados / lineales">
+<br><br>
+
+<select id="tipo">
+  <option value="enfoscado">Enfoscado (12 €/m²)</option>
+  <option value="demolicion">Demolición (35 €/m³)</option>
+</select>
+
+<br><br>
+
+<button onclick="calcular()">Crear presupuesto</button>
+
+<h3 id="resultado"></h3>
+
+<script>
+const precios = {
+  enfoscado: 12,
+  demolicion: 35
+};
+
+function calcular() {
+  let m2 = parseFloat(document.getElementById("metros").value);
+  let tipo = document.getElementById("tipo").value;
+
+  if (!m2 || m2 <= 0) {
+    document.getElementById("resultado").innerText = "Introduce una cantidad válida";
+    return;
+  }
+
+  let total = m2 * precios[tipo];
+
+  document.getElementById("resultado").innerText =
+    "💰 Total presupuesto: " + total.toFixed(2) + " €";
+}
+</script></body>
 </html>

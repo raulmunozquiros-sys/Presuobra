@@ -1,117 +1,78 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PresuObra</title>
-<style>
-body{
-    margin:0;
-    font-family:Arial,sans-serif;
-    background:#f5f5f5;
-}
-header{
-    background:#1f2937;
-    color:white;
-    padding:20px;
-    text-align:center;
-}
-main{
-    max-width:1000px;
-    margin:auto;
-    padding:30px;
-}
-.card{
-    background:white;
-    border-radius:10px;
-    padding:20px;
-    box-shadow:0 0 10px rgba(0,0,0,.15);
-}
-button{
-    background:#2563eb;
-    color:white;
-    border:none;
-    padding:15px 25px;
-    border-radius:8px;
-    cursor:pointer;
-    font-size:16px;
-}
-button:hover{
-    background:#1d4ed8;
-}
-</style>
+  <meta charset="UTF-8">
+  <title>Presuobra PRO</title>
+  <style>
+    body {
+      font-family: Arial;
+      padding: 20px;
+      background: #f4f4f4;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    input, select, button {
+      padding: 10px;
+      margin: 5px 0;
+      width: 100%;
+      max-width: 300px;
+    }
+
+    button {
+      background: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #218838;
+    }
+
+    .card {
+      background: white;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+    }
+  </style>
 </head>
 
 <body>
 
-<header>
-<h1>🏗️ PresuObra</h1>
-<p>Gestión profesional de presupuestos de reformas</p>
-</header>
+<h1>🏗️ Presuobra PRO</h1>
 
-<main>
+<h2>💰 Crear presupuesto</h2>
 
-<div class="card">
-
-<h2>Bienvenido</h2>
-
-<p>Esta es la primera versión de PresuObra.</p>
-
-<button>Nuevo presupuesto</button>
-
-</div>
-
-</main>
-
-<hr>
-
-<h2>💰 Presupuesto rápido PRO</h2>
-
-<input id="metros" type="number" placeholder="Metros cuadrados / lineales">
-<br><br>
+<input id="metros" type="number" placeholder="Metros / Cantidad">
 
 <select id="tipo">
   <option value="enfoscado">Enfoscado (12 €/m²)</option>
   <option value="demolicion">Demolición (35 €/m³)</option>
+  <option value="ladrillo">Ladrillo (0,80 €/ud)</option>
+  <option value="excavacion">Excavación (25 €/m³)</option>
+  <option value="zuncho">Zuncho hormigón (45 €/ml)</option>
 </select>
 
-<br><br>
+<button onclick="calcular()">Crear presupuesto</button>
 
-<button onclick="calcular()function calcular() {
-  let m2 = parseFloat(document.getElementById("metros").value);
-  let tipo = document.getElementById("tipo").value;
+<h2 id="resultado"></h2>
 
-  if (!m2 || m2 <= 0) {
-    document.getElementById("resultado").innerText = "Introduce una cantidad válida";
-    return;
-  }
+<hr>
 
-  let precioUnitario = precios[tipo];
-  let total = m2 * precioUnitario;
-
-  let presupuesto = {
-    tipo: tipo,
-    cantidad: m2,
-    precioUnitario: precioUnitario,
-    total: total
-  };
-
-  let lista = JSON.parse(localStorage.getItem("presupuestos")) || [];
-  lista.push(presupuesto);
-  localStorage.setItem("presupuestos", JSON.stringify(lista));
-
-  document.getElementById("resultado").innerHTML =
-    "💰 TOTAL: " + total.toFixed(2) + " €";
-
-  mostrarLista();
-}">Crear presupuesto</button>
-
-<h3 id="resultado"></h3>
+<h2>📁 Historial de presupuestos</h2>
+<div id="lista"></div>
 
 <script>
 const precios = {
   enfoscado: 12,
-  demolicion: 35
+  demolicion: 35,
+  ladrillo: 0.80,
+  excavacion: 25,
+  zuncho: 45
 };
 
 function calcular() {
@@ -125,17 +86,30 @@ function calcular() {
 
   let total = m2 * precios[tipo];
 
-  document.getElementById("resultado").innerText =
-    "💰 Total presupuesto: " + total.toFixed(2) + " €";
+  let presupuesto = {
+    tipo: tipo,
+    cantidad: m2,
+    total: total
+  };
+
+  let lista = JSON.parse(localStorage.getItem("presupuestos")) || [];
+  lista.push(presupuesto);
+  localStorage.setItem("presupuestos", JSON.stringify(lista));
+
+  document.getElementById("resultado").innerHTML =
+    "💰 TOTAL: " + total.toFixed(2) + " €";
+
+  mostrarLista();
 }
-</script>function mostrarLista() {
+
+function mostrarLista() {
   let lista = JSON.parse(localStorage.getItem("presupuestos")) || [];
 
   let html = "";
 
-  lista.forEach((p) => {
+  lista.forEach((p, i) => {
     html += `
-      <div style="border:1px solid #ccc; padding:10px; margin:5px;">
+      <div class="card">
         <strong>${p.tipo}</strong><br>
         Cantidad: ${p.cantidad}<br>
         Total: ${p.total.toFixed(2)} €
@@ -146,8 +120,8 @@ function calcular() {
   document.getElementById("lista").innerHTML = html;
 }
 
-mostrarLista();</body>
+mostrarLista();
+</script>
+
+</body>
 </html>
-<hr>
-<h2>📁 Historial</h2>
-<div id="lista"></div>
